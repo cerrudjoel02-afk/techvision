@@ -1,0 +1,95 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono-code);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: dark;
+  --background: #0a192f;
+  --foreground: #ffffff;
+  --card: #1e293b;
+  --card-foreground: #ffffff;
+  --surface: #132441;
+  --popover: #1e293b;
+  --popover-foreground: #ffffff;
+  --primary: #00e5ff;
+  --primary-foreground: #05121f;
+  --secondary: #1e293b;
+  --secondary-foreground: #ffffff;
+  --muted: #16253f;
+  --muted-foreground: #94a3b8;
+  --accent: #00e5ff;
+  --accent-foreground: #05121f;
+  --destructive: #f87171;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --border: rgba(0, 229, 255, 0.18);
+  --input: rgba(148, 163, 184, 0.25);
+  --ring: #00e5ff;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: rgba(0, 229, 255, 0.3);
+  }
+}
+
+@layer utilities {
+  .glow {
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.25), 0 0 28px -6px rgba(0, 229, 255, 0.45);
+  }
+  .glow-text {
+    text-shadow: 0 0 18px rgba(0, 229, 255, 0.55);
+  }
+  .grid-bg {
+    background-image: linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 229, 255, 0.35) transparent;
+  }
+}
