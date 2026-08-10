@@ -29,18 +29,22 @@ El proyecto **Tech Vision 2030** aborda la obsolescencia de los sistemas bancari
 ---
 
 ## 🌐 Enlaces del Proyecto
+---
+## 🎬 Video Promocional
+[![Ver Video Promocional](https://img.youtube.com/vi/TU_ID_DE_YOUTUBE/maxresdefault.jpg)](https://www.youtube.com/watch?v=TU_ID_DE_YOUTUBE)
 
-* **🌐 Prototipo / Micrositio en Vivo:** [Ver en Vercel](https://techvision-hvh3.vercel.app/) *(Asegúrate de colocar tu link exacto)*
-* **📄 Documentación Completa:** Disponible en el informe final en formato PDF.
-
+> 👆 *Haz clic en la imagen para reproducir el pitch de 90 segundos.*
+---
+* 📂 **Informe de Consultoría (PDF):** [Abrir Informe_Final_NovaBank.pdf](./Informe_Final_NovaBank.pdf)
+* 🌐 **Prototipo Web:** [Visitar en Vercel](https://techvision-hvh3.vercel.app/)
 ---
 
 ## 👥 Equipo de Consultoría (ITSE)
 
-* Jorvan
-* Elkin
-* Joel
-* Yorlenis
+* Jorvan Camargo
+* Elkin Carrasco
+* Joel Cerrud
+* Yorlenis Gaitán
 
 ---
 *Desarrollado como parte de la entrega final de consultoría tecnológica - ITSE 2026.*
