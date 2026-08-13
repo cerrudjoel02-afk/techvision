@@ -35,7 +35,7 @@ El proyecto **Tech Vision 2030** aborda la obsolescencia de los sistemas bancari
 
 > 👆 *Haz clic en la imagen para reproducir el pitch de 90 segundos.*
 ---
-* 📂 **Informe de Consultoría (PDF):** [Abrir Informe_Final_NovaBank.pdf](./Informe_Final_NovaBank.pdf)
+* 📂 **Informe de Consultoría (PDF):** [Abrir Informe_Final_NovaBank.pdf](https://github.com/cerrudjoel02-afk/techvision/blob/main/INFORME%20T%C3%89CNICO%20MAESTRO%20DE%20INGENIER%C3%8DA%20Y%20ARQUITECTURA%20DIGITAL%20copy.pdf)
 * 🌐 **Prototipo Web:** [Visitar en Vercel](https://techvision-hvh3.vercel.app/)
 ---
 
