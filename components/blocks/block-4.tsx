@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils'
 /* 18 — Organigrama y RACI */
 const ROLES = [
   { id: 'sponsor', n: 'Sponsor Ejecutivo', p: 'CIO NovaBank Global', d: 'Aprueba presupuesto, resuelve escalamientos y preside el steering committee mensual.' },
-  { id: 'pm', n: 'Project Manager', p: 'Jorvan Camargo', d: 'Gestiona alcance, cronograma, riesgos y comunicación con stakeholders.' },
-  { id: 'arch', n: 'Arquitecto de Soluciones', p: 'Elkin Carrasco', d: 'Define la arquitectura cloud-native, estándares técnicos y decisiones ADR.' },
-  { id: 'sec', n: 'Líder de Ciberseguridad', p: 'Joel Cerrud', d: 'Diseña el modelo Zero Trust, matriz de riesgos y cumplimiento normativo.' },
+  { id: 'pm', n: 'Project Manager', p: 'Elkin Carrasco', d: 'Gestiona alcance, cronograma, riesgos y comunicación con stakeholders.' },
+  { id: 'arch', n: 'Arquitecto de Soluciones', p: 'Joel Cerrud', d: 'Define la arquitectura cloud-native, estándares técnicos y decisiones ADR.' },
+  { id: 'sec', n: 'Líder de Ciberseguridad', p: 'Jorvan Camargo', d: 'Diseña el modelo Zero Trust, matriz de riesgos y cumplimiento normativo.' },
   { id: 'ux', n: 'Líder UX/UI y Datos', p: 'Yorlenis Gaitán', d: 'Sistema de diseño, investigación de usuarios y gobierno de datos e IA.' },
 ]
 const RACI_TASKS = [

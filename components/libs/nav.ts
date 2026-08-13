@@ -79,4 +79,4 @@ export const ALL_SECTIONS = BLOCKS.flatMap((b) =>
   b.sections.map((s) => ({ ...s, block: b.id, blockTitle: b.title })),
 )
 
-export const CONSULTORES = ['Jorvan Camargo', 'Elkin Carrasco', 'Joel Cerrud', 'Yorlenis Gaitán']
+export const CONSULTORES = ['Elkin Carrasco', 'Joel Cerrud', 'Jorvan Camargo', 'Yorlenis Gaitán']

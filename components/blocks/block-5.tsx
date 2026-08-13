@@ -108,8 +108,8 @@ export function Video() {
             {playing ? (
               <iframe
                 className="h-full w-full"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0"
-                title="Video promocional Tech Vision 2030"
+                src="https://www.youtube.com/embed/o_2YDYoBH4Q?autoplay=1&rel=0"
+                title="TECH VISION 2030"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
@@ -122,9 +122,9 @@ export function Video() {
                 <span className="flex h-16 w-16 items-center justify-center rounded-full border border-primary/50 bg-primary/15 text-primary transition-all group-hover:scale-110 group-hover:glow">
                   <Play className="ml-1 h-7 w-7" />
                 </span>
-                <span className="text-sm font-semibold">Tech Vision 2030 — Video institucional</span>
+                <span className="text-sm font-semibold">TECH VISION 2030</span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  03:12 · ITSE · NovaBank Global S.A.
+                  YouTube · NovaBank Global S.A.
                 </span>
               </button>
             )}
