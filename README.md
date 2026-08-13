@@ -31,7 +31,7 @@ El proyecto **Tech Vision 2030** aborda la obsolescencia de los sistemas bancari
 ## 🌐 Enlaces del Proyecto
 ---
 ## 🎬 Video Promocional
-[![Ver Video Promocional](https://img.youtube.com/vi/TU_ID_DE_YOUTUBE/maxresdefault.jpg)](https://www.youtube.com/watch?v=TU_ID_DE_YOUTUBE)
+[![Ver Video Promocional](https://img.youtube.com/vi/TU_ID_DE_YOUTUBE/maxresdefault.jpg)](https://youtu.be/o_2YDYoBH4Q?si=at6Vz8lEy0cYNoPL)
 
 > 👆 *Haz clic en la imagen para reproducir el pitch de 90 segundos.*
 ---
