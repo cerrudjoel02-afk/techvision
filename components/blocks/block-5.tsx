@@ -175,6 +175,9 @@ const REFERENCIAS = [
 
 export function Conclusiones() {
   const [qr, setQr] = useState(false)
+  const githubRepoUrl = 'https://github.com/cerrudjoel02-afk/techvision'
+  const githubQrImage = '/github-techvision-qr.png'
+
   return (
     <Section
       id="conclusiones"
@@ -201,31 +204,34 @@ export function Conclusiones() {
         <Card className="flex flex-col items-center text-center">
           <QrCode className="h-6 w-6 text-primary" />
           <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-primary">
-            Código QR unificado
+            Repositorio GitHub
           </p>
-          <button
-            onClick={() => setQr(true)}
+          <a
+            href={githubRepoUrl}
+            target="_blank"
+            rel="noreferrer"
             className="mt-5 rounded-xl border border-border bg-[#FFFFFF] p-3 transition-all hover:glow"
-            aria-label="Ampliar código QR de recursos"
+            aria-label="Abrir repositorio GitHub del proyecto"
           >
             <Image
-              src="/qr-tech-vision-2030.png"
-              alt="Código QR para acceder a todos los recursos del proyecto Tech Vision 2030"
+              src={githubQrImage}
+              alt="Código QR del repositorio GitHub del proyecto Tech Vision 2030"
               width={180}
               height={180}
               className="h-40 w-40"
             />
-          </button>
+          </a>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Escanea para acceder al documento técnico, el prototipo, el video promocional y el
-            repositorio del proyecto.
+            Escanea el código o abre el repositorio para revisar el proyecto, el código y los recursos.
           </p>
-          <button
-            onClick={() => setQr(true)}
+          <a
+            href={githubRepoUrl}
+            target="_blank"
+            rel="noreferrer"
             className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:glow"
           >
-            Ampliar código QR
-          </button>
+            Abrir repositorio GitHub
+          </a>
         </Card>
       </div>
 
@@ -269,19 +275,27 @@ export function Conclusiones() {
         </div>
       </footer>
 
-      <Modal open={qr} onClose={() => setQr(false)} title="Centro de recursos — QR unificado">
+      <Modal open={qr} onClose={() => setQr(false)} title="Repositorio GitHub — Tech Vision 2030">
         <div className="flex flex-col items-center gap-5">
           <div className="rounded-xl bg-[#FFFFFF] p-4">
             <Image
-              src="/qr-tech-vision-2030.png"
-              alt="Código QR ampliado del centro de recursos Tech Vision 2030"
+              src={githubQrImage}
+              alt="Código QR del repositorio GitHub del proyecto Tech Vision 2030"
               width={260}
               height={260}
               className="h-56 w-56"
             />
           </div>
+          <a
+            href={githubRepoUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:glow"
+          >
+            Abrir repositorio
+          </a>
           <ul className="grid w-full gap-2 sm:grid-cols-2">
-            {['Documento técnico (PDF)', 'Prototipo interactivo', 'Video promocional', 'Repositorio del proyecto'].map(
+            {['Documento técnico (PDF)', 'Prototipo interactivo', 'Video promocional', 'Código del proyecto'].map(
               (x) => (
                 <li
                   key={x}
@@ -293,7 +307,7 @@ export function Conclusiones() {
             )}
           </ul>
           <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-            tech-vision-2030.novabank.example/recursos
+            github.com/cerrudjoel02-afk/techvision
           </p>
         </div>
       </Modal>
