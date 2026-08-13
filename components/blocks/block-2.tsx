@@ -513,59 +513,331 @@ const PROTO_STEPS = [
 
 export function Prototipo() {
   const [step, setStep] = useState(0)
+  const [activeTab, setActiveTab] = useState<'cards' | 'onboarding' | 'transfer'>('cards')
+  const [privacyOn, setPrivacyOn] = useState(true)
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({ debito: false, credito: false })
+  const [frozen, setFrozen] = useState<Record<string, boolean>>({ debito: false, credito: false })
+  const [biometricStage, setBiometricStage] = useState(0)
+  const [transferForm, setTransferForm] = useState({
+    monto: '',
+    cuenta: '',
+    concepto: '',
+  })
+  const [transferErrors, setTransferErrors] = useState<{ monto?: string; cuenta?: string; concepto?: string }>({})
+  const [otpOpen, setOtpOpen] = useState(false)
+  const [otpValue, setOtpValue] = useState('')
+  const [transferSuccess, setTransferSuccess] = useState(false)
+
   const s = PROTO_STEPS[step]
+  const tabs = [
+    { id: 'cards', label: 'Tarjetas' },
+    { id: 'onboarding', label: 'Biometría' },
+    { id: 'transfer', label: 'SPI' },
+  ] as const
+
+  const cards = [
+    {
+      id: 'debito',
+      name: 'Débito',
+      number: '4567 8901 2345 1120',
+      masked: '•••• •••• •••• 1120',
+      cvv: '412',
+      holder: 'ELKIN CARRASCO',
+      accent: 'from-cyan-400 via-sky-500 to-indigo-600',
+    },
+    {
+      id: 'credito',
+      name: 'Crédito',
+      number: '9876 5432 1098 7741',
+      masked: '•••• •••• •••• 7741',
+      cvv: '867',
+      holder: 'NOVA BANK',
+      accent: 'from-violet-500 via-fuchsia-500 to-cyan-400',
+    },
+  ] as const
+
+  const handleTransferChange = (field: keyof typeof transferForm, value: string) => {
+    setTransferForm((prev) => ({ ...prev, [field]: value }))
+    setTransferErrors((prev) => ({ ...prev, [field]: undefined }))
+    setTransferSuccess(false)
+  }
+
+  const validateTransfer = () => {
+    const errors: { monto?: string; cuenta?: string; concepto?: string } = {}
+
+    if (!transferForm.monto || Number(transferForm.monto) <= 0) {
+      errors.monto = 'El monto debe ser mayor a 0.'
+    }
+
+    if (!transferForm.cuenta.trim()) {
+      errors.cuenta = 'Debes indicar la cuenta destino.'
+    }
+
+    if (!transferForm.concepto.trim()) {
+      errors.concepto = 'Escribe un concepto de la transferencia.'
+    }
+
+    setTransferErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleTransferSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
+
+    if (!validateTransfer()) return
+    setOtpOpen(true)
+  }
+
+  const handleOtpConfirm = () => {
+    if (otpValue.trim().length < 4) return
+    setOtpOpen(false)
+    setOtpValue('')
+    setTransferSuccess(true)
+  }
+
+  const biometricStates = [
+    { title: 'OCR de documento', status: 'Escaneando cédula…', accent: 'text-cyan-300' },
+    { title: 'Liveness facial', status: 'Validando rostro con scanner…', accent: 'text-violet-300' },
+    { title: 'Aprobado', status: 'Identidad verificada', accent: 'text-emerald-300' },
+  ] as const
+
+  const currentBiometric = biometricStates[biometricStage]
+
   return (
     <Section
       id="prototipo"
       n={13}
       eyebrow="Bloque 2"
       title="Contenedor de prototipo web"
-      description="Simulador del flujo de onboarding en un marco de dispositivo móvil. Avanza por los cinco pasos del recorrido KYC."
+      description="Simulador del flujo de onboarding y banca digital en un marco móvil con validaciones, biometría y transferencias en tiempo real."
     >
       <div className="grid gap-6 lg:grid-cols-[auto_1fr] lg:items-start">
-        <div className="mx-auto w-full max-w-[320px]">
-          <div className="rounded-[2.2rem] border-4 border-[#243b5e] bg-[#0d1e38] p-3 glow">
+        <div className="mx-auto w-full max-w-[360px]">
+          <div className="rounded-[2.2rem] border-4 border-[#243b5e] bg-[#0d1e38] p-3 shadow-[0_0_25px_rgba(0,229,255,0.15)]">
             <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-[#243b5e]" />
-            <div className="flex min-h-[460px] flex-col rounded-2xl border border-border bg-card p-5">
+            <div className="flex min-h-[520px] flex-col rounded-2xl border border-border bg-[#0f172a] p-4">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
                   NovaBank
                 </span>
                 <span className="font-mono text-[10px] text-muted-foreground">
-                  {step + 1}/{PROTO_STEPS.length}
+                  {activeTab === 'cards' ? 'Wallet' : activeTab === 'onboarding' ? 'KYC' : 'SPI'}
                 </span>
               </div>
-              <div className="mt-3 flex gap-1">
-                {PROTO_STEPS.map((_, i) => (
-                  <span
-                    key={i}
+
+              <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl border border-border bg-[#101b2d] p-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      'h-1 flex-1 rounded-full transition-colors',
-                      i <= step ? 'bg-primary' : 'bg-muted',
+                      'rounded-lg px-2 py-1.5 text-[11px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]',
+                      activeTab === tab.id ? 'bg-primary text-primary-foreground shadow-lg shadow-cyan-500/20' : 'text-muted-foreground hover:text-foreground',
                     )}
-                  />
+                    aria-pressed={activeTab === tab.id}
+                  >
+                    {tab.label}
+                  </button>
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-1 flex-col">
-                <div
-                  className={cn(
-                    'flex h-32 items-center justify-center rounded-xl border border-dashed border-primary/40 bg-primary/5 font-mono text-xs text-primary',
-                    step === 4 && 'border-solid border-[color:var(--success)]/50 bg-[color:var(--success)]/10 text-[color:var(--success)]',
-                  )}
-                >
-                  {['@', 'ID', '☺', '⟳', '✓'][step]}
-                </div>
-                <h3 className="mt-6 text-lg font-semibold">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
-              </div>
+              {activeTab === 'cards' && (
+                <div className="mt-4 space-y-3">
+                  {cards.map((card) => {
+                    const isFrozen = frozen[card.id]
+                    const cardNumber = privacyOn ? card.masked : card.number
+                    const cardCvv = privacyOn ? '•••' : card.cvv
+                    return (
+                      <div key={card.id} className="[perspective:1200px]">
+                        <button
+                          type="button"
+                          onClick={() => setFlipped((prev) => ({ ...prev, [card.id]: !prev[card.id] }))}
+                          className="block w-full rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]"
+                          aria-label={`Ver detalles de tarjeta ${card.name}`}
+                        >
+                          <div
+                            className={cn(
+                              'relative h-40 w-full rounded-2xl border border-white/10 transition-all duration-500 [transform-style:preserve-3d]',
+                              flipped[card.id] && '[transform:rotateY(180deg)]',
+                              isFrozen && 'opacity-70 grayscale-[0.2]',
+                            )}
+                          >
+                            <div className={cn('absolute inset-0 overflow-hidden rounded-2xl bg-gradient-to-br p-4 text-white [backface-visibility:hidden]', card.accent)}>
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] uppercase tracking-[0.24em] text-white/80">{card.name}</span>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-white/80">{isFrozen ? 'Congelada' : 'Activa'}</span>
+                              </div>
+                              <div className="mt-7 flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-white/75">
+                                <span>NovaBank</span>
+                                <span>VISA</span>
+                              </div>
+                              <p className="mt-5 text-lg tracking-[0.24em] text-white">{cardNumber}</p>
+                              <div className="mt-4 flex items-end justify-between">
+                                <div>
+                                  <p className="text-[9px] uppercase tracking-[0.2em] text-white/70">Titular</p>
+                                  <p className="mt-1 text-[11px] font-medium text-white">{card.holder}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[9px] uppercase tracking-[0.2em] text-white/70">CVV</p>
+                                  <p className="mt-1 text-[11px] font-medium text-white">{cardCvv}</p>
+                                </div>
+                              </div>
+                            </div>
 
-              <button
-                onClick={() => setStep((step + 1) % PROTO_STEPS.length)}
-                className="mt-6 w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition-all hover:glow"
-              >
-                {s.cta}
-              </button>
+                            <div className={cn('absolute inset-0 rounded-2xl border border-white/10 bg-[#111827] p-4 text-white [backface-visibility:hidden] [transform:rotateY(180deg)]')}>
+                              <div className="flex h-full flex-col justify-between">
+                                <div className="h-10 rounded-md bg-white/10" />
+                                <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                                  <p className="text-[9px] uppercase tracking-[0.2em] text-white/60">Límite disponible</p>
+                                  <p className="mt-2 text-lg font-semibold text-cyan-300">$28,450.00</p>
+                                </div>
+                                <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-white/70">
+                                  <span>Transferencias</span>
+                                  <span>SPI</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+
+                        <div className="mt-2 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setPrivacyOn((prev) => !prev)}
+                            className="flex-1 rounded-lg border border-border bg-[#122038] px-2 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-300 transition hover:border-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                          >
+                            {privacyOn ? 'Ocultar datos' : 'Mostrar datos'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFrozen((prev) => ({ ...prev, [card.id]: !prev[card.id] }))}
+                            className="flex-1 rounded-lg border border-border bg-[#122038] px-2 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                          >
+                            {isFrozen ? 'Descongelar' : 'Congelar'}
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {activeTab === 'onboarding' && (
+                <div className="mt-4 flex flex-1 flex-col">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                    <span>Identidad digital</span>
+                    <span>{biometricStage + 1}/3</span>
+                  </div>
+
+                  <div className="mt-4 flex gap-1">
+                    {biometricStates.map((_, index) => (
+                      <span
+                        key={index}
+                        className={cn(
+                          'h-1 flex-1 rounded-full transition-all',
+                          index <= biometricStage ? 'bg-primary' : 'bg-muted',
+                        )}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-2xl border border-border bg-[#101b2d] p-4 text-center">
+                    <div className={cn('relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed', biometricStage === 0 && 'border-cyan-400/80', biometricStage === 1 && 'border-violet-400/80 animate-pulse', biometricStage === 2 && 'border-emerald-400/80')}>
+                      <div className={cn('absolute inset-2 rounded-full border border-white/10', biometricStage === 1 && 'animate-spin')} />
+                      <span className={cn('text-2xl', currentBiometric.accent)}>
+                        {biometricStage === 0 ? 'ID' : biometricStage === 1 ? '◉' : '✓'}
+                      </span>
+                    </div>
+
+                    <p className={cn('mt-4 text-sm font-semibold', currentBiometric.accent)}>{currentBiometric.title}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{currentBiometric.status}</p>
+                  </div>
+
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBiometricStage((prev) => Math.max(0, prev - 1))}
+                      className="flex-1 rounded-lg border border-border bg-[#122038] px-2 py-2 text-xs font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                    >
+                      Atrás
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBiometricStage((prev) => Math.min(biometricStates.length - 1, prev + 1))}
+                      className="flex-1 rounded-lg bg-primary px-2 py-2 text-xs font-semibold text-primary-foreground transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                    >
+                      {biometricStage === biometricStates.length - 1 ? 'Finalizar' : 'Continuar'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'transfer' && (
+                <form className="mt-4 space-y-3" onSubmit={handleTransferSubmit} noValidate>
+                  <div>
+                    <label htmlFor="monto" className="mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      Monto
+                    </label>
+                    <input
+                      id="monto"
+                      type="number"
+                      min="1"
+                      value={transferForm.monto}
+                      onChange={(event) => handleTransferChange('monto', event.target.value)}
+                      className="w-full rounded-xl border border-border bg-[#101b2d] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                      placeholder="1500.00"
+                      aria-invalid={Boolean(transferErrors.monto)}
+                    />
+                    {transferErrors.monto && <p className="mt-1 text-[10px] text-red-300">{transferErrors.monto}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="cuenta" className="mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      Cuenta destino
+                    </label>
+                    <input
+                      id="cuenta"
+                      type="text"
+                      value={transferForm.cuenta}
+                      onChange={(event) => handleTransferChange('cuenta', event.target.value)}
+                      className="w-full rounded-xl border border-border bg-[#101b2d] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                      placeholder="CR 341-9103"
+                      aria-invalid={Boolean(transferErrors.cuenta)}
+                    />
+                    {transferErrors.cuenta && <p className="mt-1 text-[10px] text-red-300">{transferErrors.cuenta}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="concepto" className="mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      Concepto
+                    </label>
+                    <input
+                      id="concepto"
+                      type="text"
+                      value={transferForm.concepto}
+                      onChange={(event) => handleTransferChange('concepto', event.target.value)}
+                      className="w-full rounded-xl border border-border bg-[#101b2d] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                      placeholder="Pago servicio / ahorro familiar"
+                      aria-invalid={Boolean(transferErrors.concepto)}
+                    />
+                    {transferErrors.concepto && <p className="mt-1 text-[10px] text-red-300">{transferErrors.concepto}</p>}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  >
+                    Confirmar transferencia
+                  </button>
+
+                  <div aria-live="polite" className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[11px] text-emerald-200">
+                    {transferSuccess
+                      ? 'Transferencia aprobada y enviada con MFA exitoso.'
+                      : 'Procesamiento inmediato SPI · validación de seguridad activa.'}
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
@@ -580,25 +852,29 @@ export function Prototipo() {
               resolverse en menos de 3 minutos, con reintentos de captura sin perder el progreso.
             </li>
             <li>
-              <span className="text-foreground">Estados de error:</span> documento ilegible, rostro
-              no coincidente y coincidencia en lista restrictiva derivan a revisión manual.
+              <span className="text-foreground"> Estados de error:</span> documento ilegible, rostro
+              no coincidente o fraude potencial derivan a revisión manual con cumplimiento KCY/AML.
             </li>
             <li>
-              <span className="text-foreground">Accesibilidad:</span> instrucciones por voz,
-              contraste AA y controles operables con una sola mano.
+              <span className="text-foreground">Accesibilidad:</span> contraste AA, foco visible y
+              controles operables con una sola mano para navegación por teclado.
             </li>
             <li>
-              <span className="text-foreground">Métrica:</span> tasa de finalización objetivo ≥ 88%
-              medida con analítica de embudo por paso.
+              <span className="text-foreground">Métricas:</span> tasa de finalización ≥ 88%, MFA con
+              token OTP y confirmación 24/7 en transferencias SPI.
             </li>
           </ul>
           <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
             {PROTO_STEPS.map((p, i) => (
               <button
                 key={p.t}
-                onClick={() => setStep(i)}
+                type="button"
+                onClick={() => {
+                  setActiveTab('onboarding')
+                  setStep(i)
+                }}
                 className={cn(
-                  'rounded-full border px-3 py-1 text-xs transition-colors',
+                  'rounded-full border px-3 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400',
                   step === i
                     ? 'border-primary bg-primary/15 text-primary'
                     : 'border-input text-muted-foreground hover:text-foreground',
@@ -610,6 +886,42 @@ export function Prototipo() {
           </div>
         </Card>
       </div>
+
+      {otpOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-[#0f172a] p-5 shadow-2xl shadow-cyan-950/30">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Verificación MFA</p>
+            <h3 className="mt-3 text-lg font-semibold">Confirma la operación</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Ingresa el código OTP enviado a tu dispositivo móvil para autorizar la transferencia.
+            </p>
+            <input
+              type="text"
+              value={otpValue}
+              onChange={(event) => setOtpValue(event.target.value)}
+              placeholder="123456"
+              className="mt-4 w-full rounded-xl border border-border bg-[#101b2d] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+              aria-label="Código OTP"
+            />
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setOtpOpen(false)}
+                className="flex-1 rounded-xl border border-border bg-[#122038] px-3 py-2.5 text-sm font-medium text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleOtpConfirm}
+                className="flex-1 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              >
+                Validar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Section>
   )
 }
